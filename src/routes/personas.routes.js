@@ -4,7 +4,7 @@ import pool from "../database.js";
 const router = Router();
 
 router.get('/add', async (req,res)=>{
-    const [tipos_personas] = await pool.query('SELECT * FROM tipo_persona');
+    const [tipos_personas] = await pool.query('SELECT * FROM tipopersona');
     res.render('personas/add', {tipos:tipos_personas});
 });
 
@@ -24,7 +24,7 @@ router.post('/add', async (req,res)=>{
 
 router.get('/list', async (req,res)=>{
     try{
-        const [result] = await pool.query('SELECT * FROM personas');
+        const [result] = await pool.query('SELECT personas.id, personas.name, personas.lastname, personas.age, tipopersona.nombre as TipoPersona FROM personas JOIN tipopersona on personas.tipo_persona = tipopersona.idTp');
         res.render('personas/list', {personas: result});
     }
     catch(err){
@@ -35,8 +35,8 @@ router.get('/list', async (req,res)=>{
 router.get('/edit/:id', async (req, res)=>{
     try{
         const {id} = req.params;
-        const [persona] = await pool.query('SELECT * FROM personas WHERE id = ?', [id]);
-        const [tipos_personas] = await pool.query('SELECT * FROM tipo_persona');
+        const [persona] = await pool.query('SELECT personas.id, personas.name, personas.lastname, personas.age, tipopersona.nombre as TipoPersona FROM personas JOIN tipopersona on personas.tipo_persona = tipopersona.idTp WHERE id = ?', [id]);
+        const [tipos_personas] = await pool.query('SELECT * FROM tipopersona');
         const personaEdit = persona[0];
         res.render('personas/edit', {persona: personaEdit,tipos:tipos_personas});
     }
